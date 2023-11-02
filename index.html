@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=300px, initial-scale=1">
 <link rel="manifest" href="manifest.json">
 <title>PWA Sample</title>
 <link rel="stylesheet" href="css/style.css">
@@ -81,19 +81,6 @@ function connect() {
       let textDecoder = new TextDecoder();
       console.log("Received:", textDecoder.decode(data));
       document.getElementById('output').value += textDecoder.decode(data);
-
-
-      navigator.mediaDevices.enumerateDevices()
-      .then(function(devices) { // 成功時
-      devices.forEach(function(device) {
-        // デバイスごとの処理
-        console.log(device.deviceId);
-      });
-      })
-      .catch(function(err) { // エラー発生時
-      console.error('enumerateDevide ERROR:', err);
-      });
-
     }
     port.onReceiveError = error => {
       console.error(error);
@@ -122,6 +109,16 @@ window.onload = _ => {
       port = selectedPort;
       this.style = "visibility: hidden";
       connect();
+      let devices = navigator.mediaDevices.enumerateDevices()
+      .then(function(devices) { // 成功時
+      devices.forEach(function(device) {
+        // デバイスごとの処理
+        console.log(device.deviceId);
+      });
+      })
+      .catch(function(err) { // エラー発生時
+      console.error('enumerateDevide ERROR:', err);
+      });
     });
   }
 
