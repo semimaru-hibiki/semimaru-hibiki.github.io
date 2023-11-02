@@ -81,6 +81,19 @@ function connect() {
       let textDecoder = new TextDecoder();
       console.log("Received:", textDecoder.decode(data));
       document.getElementById('output').value += textDecoder.decode(data);
+
+
+      navigator.mediaDevices.enumerateDevices()
+      .then(function(devices) { // 成功時
+      devices.forEach(function(device) {
+        // デバイスごとの処理
+        console.log(device.deviceId);
+      });
+      })
+      .catch(function(err) { // エラー発生時
+      console.error('enumerateDevide ERROR:', err);
+      });
+
     }
     port.onReceiveError = error => {
       console.error(error);
