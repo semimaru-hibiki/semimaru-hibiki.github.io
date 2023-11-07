@@ -77,6 +77,7 @@ let port;
 
 function connect() {
   port.connect().then(() => {
+  alert('アラートのメッセージ');
     port.onReceive = data => {
       let textDecoder = new TextDecoder();
       console.log("Received:", textDecoder.decode(data));
@@ -109,6 +110,7 @@ window.onload = _ => {
       port = selectedPort;
       this.style = "visibility: hidden";
       connect();
+      alert('アラートのメッセージ1')
       let devices = navigator.mediaDevices.enumerateDevices()
       .then(function(devices) { // 成功時
       devices.forEach(function(device) {
