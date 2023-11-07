@@ -107,6 +107,7 @@ function send(string) {
 window.onload = _ => {
   document.querySelector("#connect").onclick = function() {
     serial.requestPort().then(selectedPort => {
+    alert('アラートのメッセージ2');
       port = selectedPort;
       this.style = "visibility: hidden";
       connect();
