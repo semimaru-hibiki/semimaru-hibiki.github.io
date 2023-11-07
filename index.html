@@ -51,6 +51,7 @@ var serial = {};
 
     return this.device_.open()
         .then(() => {
+        alert('アラートのメッセージ3');
           if (this.device_.configuration === null) {
             return this.device_.selectConfiguration(1);
           }
