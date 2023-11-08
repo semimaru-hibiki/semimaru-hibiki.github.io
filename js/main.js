@@ -39,57 +39,57 @@ async () => {
 }
 setInterval(() => {com_exist();}, 3000);
   //音声認識開始
-  window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-		const speech = new window.SpeechRecognition();
-		speech.lang = 'ja-JP';
-		speech.continuous = true;
-	    const content = document.getElementById('speach_text_content');
+//   window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+// 		const speech = new window.SpeechRecognition();
+// 		speech.lang = 'ja-JP';
+// 		speech.continuous = true;
+// 	    const content = document.getElementById('speach_text_content');
 	
-    speech.start();
+//     speech.start();
 
-	  //音声認識結果
-    speech.onresult = function(e) {
-		let now_time = new Date();
-		speech.stop();
-			if(e.results[0].isFinal){
-				var autotext =  e.results[0][0].transcript
-        if(autotext == '録画開始'){
-          com_file("rec_start");
-          startRecording();
-        }
-        if(autotext == '録画 停止'){
-          com_file("rec_end");
-          stopRecording();
-          recordButton.textContent = '録画開始';
-          playButton.disabled = false;
-          downloadButton.disabled = false;
-          codecPreferences.disabled = false;
-        }
-        if(autotext == 'カメラ 準備'){
-          com_file("rec_ready");
-          document.querySelector('button#start').disabled = true;
-          const hasEchoCancellation = document.querySelector('#echoCancellation').checked;
-          const constraints = {
-          audio: {
-            echoCancellation: {exact: hasEchoCancellation}
-          },
-          video: {
-            width: 1280, height: 720
-          }
-        };
-        console.log('Using media constraints:', constraints);
-        init(constraints);
-        }
-				content.innerHTML = '<div class="speach_text_messagebox">【 認識 】 <br>' + autotext +'<span id="translate" style="color:#ff0;"></span></div>';
+// 	  //音声認識結果
+//     speech.onresult = function(e) {
+// 		let now_time = new Date();
+// 		speech.stop();
+// 			if(e.results[0].isFinal){
+// 				var autotext =  e.results[0][0].transcript
+//         if(autotext == '録画開始'){
+//           com_file("rec_start");
+//           startRecording();
+//         }
+//         if(autotext == '録画 停止'){
+//           com_file("rec_end");
+//           stopRecording();
+//           recordButton.textContent = '録画開始';
+//           playButton.disabled = false;
+//           downloadButton.disabled = false;
+//           codecPreferences.disabled = false;
+//         }
+//         if(autotext == 'カメラ 準備'){
+//           com_file("rec_ready");
+//           document.querySelector('button#start').disabled = true;
+//           const hasEchoCancellation = document.querySelector('#echoCancellation').checked;
+//           const constraints = {
+//           audio: {
+//             echoCancellation: {exact: hasEchoCancellation}
+//           },
+//           video: {
+//             width: 1280, height: 720
+//           }
+//         };
+//         console.log('Using media constraints:', constraints);
+//         init(constraints);
+//         }
+// 				content.innerHTML = '<div class="speach_text_messagebox">【 認識 】 <br>' + autotext +'<span id="translate" style="color:#ff0;"></span></div>';
 
 
-			 }
-		}
+// 			 }
+// 		}
 
-		speech.onend = () => { 
-		   speech.start() 
-		};
-    
+//   speech.onend = () => { 
+//       speech.start() 
+// };
+
 //録画ボタン    
 recordButton.addEventListener('click', () => {
   if (recordButton.textContent === '録画開始') {
