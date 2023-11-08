@@ -1,144 +1,68 @@
 <!DOCTYPE html>
+<!--
+ *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree.
+-->
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=300px, initial-scale=1">
-<link rel="manifest" href="manifest.json">
-<title>PWA Sample</title>
-<link rel="stylesheet" href="css/style.css">
+
+    <meta charset="utf-8">
+    <meta name="description" content="WebRTC code samples">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+    <meta itemprop="description" content="Client-side WebRTC code samples">
+    <meta itemprop="image" content="../../../images/webrtc-icon-192x192.png">
+    <meta itemprop="name" content="WebRTC code samples">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta id="theme-color" name="theme-color" content="#ffffff">
+
+    <base target="_blank">
+
+    <title>MediaStream Recording</title>
+
+    <link rel="icon" sizes="192x192" href="../../../images/webrtc-icon-192x192.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="css/main.css">
+
 </head>
+
 <body>
-  <script>
-var serial = {};
 
-(function() {
-  'use strict';
+<div id="container">
 
-  serial.getPorts = function() {
-    return navigator.usb.getDevices().then(devices => {
-      return devices.map(device => new serial.Port(device));
-    });
-  };
+    <video id="gum" playsinline autoplay muted></video>
+    <video id="recorded" playsinline loop></video>
 
-  serial.requestPort = function() {
-    const filters = [
-      { 'vendorId': 0x2fe3, 'productId': 0x0100 },
-      { 'vendorId': 0x2fe3, 'productId': 0x00a },
-      { 'vendorId': 0x8086, 'productId': 0xF8A1 },
-      { 'vendorId': 0x0bda, 'productId': 0x58b0 },
-    ];
-    return navigator.usb.requestDevice({ 'filters': filters }).then(
-      device => new serial.Port(device)
-    );
-  }
+    <div>
+        <button id="start">Start camera</button>
+        <button id="record" disabled>Start Recording</button>
+        <button id="play" disabled>Play</button>
+        <button id="download" disabled>Download</button>
+    </div>
 
-  serial.Port = function(device) {
-    this.device_ = device;
-  };
+    <div>
+        Recording format: <select id="codecPreferences" disabled></select>
+    </div>
+    <div>
+        <h4>Media Stream Constraints options</h4>
+        <p>Echo cancellation: <input type="checkbox" id="echoCancellation"></p>
+    </div>
 
-  serial.Port.prototype.connect = function() {
-    let readLoop = () => {
-      const {
-        endpointNumber
-      } = this.device_.configuration.interfaces[0].alternate.endpoints[0]
-      this.device_.transferIn(endpointNumber, 64).then(result => {
-        this.onReceive(result.data);
-        readLoop();
-      }, error => {
-        this.onReceiveError(error);
-      });
-    };
+    <div>
+        <span id="errorMsg"></span>
+    </div>
 
-    return this.device_.open()
-        .then(() => {
-        alert('アラートのメッセージ3');
-          if (this.device_.configuration === null) {
-            return this.device_.selectConfiguration(1);
-          }
-        })
-        .then(() => this.device_.claimInterface(0))
-        .then(() => {
-          readLoop();
-        });
-  };
+    <div id="speach_text_content"></div>
 
-  serial.Port.prototype.disconnect = function() {
-    return this.device_.close();
-  };
+</div>
 
-  serial.Port.prototype.send = function(data) {
-    const {
-      endpointNumber
-    } = this.device_.configuration.interfaces[0].alternate.endpoints[1]
-    return this.device_.transferOut(endpointNumber, data);
-  };
-})();
+<!-- include adapter for srcObject shim -->
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="js/main.js" async></script>
+<script src="../../../js/lib/ga.js"></script>
 
-let port;
-
-function connect() {
-  port.connect().then(() => {
-  alert('アラートのメッセージ');
-    port.onReceive = data => {
-      let textDecoder = new TextDecoder();
-      console.log("Received:", textDecoder.decode(data));
-      document.getElementById('output').value += textDecoder.decode(data);
-    }
-    port.onReceiveError = error => {
-      console.error(error);
-      document.querySelector("#connect").style = "visibility: initial";
-      port.disconnect();
-    };
-  });
-}
-
-function send(string) {
-  console.log("sending to serial:" + string.length);
-  if (string.length === 0)
-    return;
-  console.log("sending to serial: [" + string +"]\n");
-
-  let view = new TextEncoder('utf-8').encode(string);
-  console.log(view);
-  if (port) {
-    port.send(view);
-  }
-};
-
-window.onload = _ => {
-  document.querySelector("#connect").onclick = function() {
-    serial.requestPort().then(selectedPort => {
-    alert('アラートのメッセージ2');
-      port = selectedPort;
-      this.style = "visibility: hidden";
-      connect();
-      alert('アラートのメッセージ1')
-      let devices = navigator.mediaDevices.enumerateDevices()
-      .then(function(devices) { // 成功時
-      devices.forEach(function(device) {
-        // デバイスごとの処理
-        console.log(device.deviceId);
-      });
-      })
-      .catch(function(err) { // エラー発生時
-      console.error('enumerateDevide ERROR:', err);
-      });
-    });
-  }
-
-  document.querySelector("#submit").onclick = () => {
-    let source = document.querySelector("#editor").value;
-    send(source);
-  }
-}
-
-</script>
- <button id="connect" style="visibility: initial; hight: 50px">Connect To WebUSB Device</button>
- <br><br><label for="title">Sender: </label> <br>
- <textarea id="editor", rows="25" cols="80" id="source">WebUSB!</textarea>
- <br><button id="submit">Send</button>
- <br><br>
- <label for="title">Receiver: </label> </br>
- <textarea id="output", rows="25" cols="80" id="source"></textarea>
 </body>
 </html>
