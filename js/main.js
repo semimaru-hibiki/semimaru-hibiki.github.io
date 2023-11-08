@@ -60,7 +60,7 @@ setInterval(() => {com_exist();}, 3000);
         if(autotext == '録画 停止'){
           com_file("rec_end");
           stopRecording();
-          recordButton.textContent = 'Start Recording';
+          recordButton.textContent = '録画開始';
           playButton.disabled = false;
           downloadButton.disabled = false;
           codecPreferences.disabled = false;
@@ -92,11 +92,11 @@ setInterval(() => {com_exist();}, 3000);
     
 //録画ボタン    
 recordButton.addEventListener('click', () => {
-  if (recordButton.textContent === 'Start Recording') {
+  if (recordButton.textContent === '録画開始') {
     startRecording();
   } else {
     stopRecording();
-    recordButton.textContent = 'Start Recording';
+    recordButton.textContent = '録画開始';
     playButton.disabled = false;
     downloadButton.disabled = false;
     codecPreferences.disabled = false;
@@ -167,7 +167,7 @@ function startRecording() {
 
   //録画ボタン
   console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
-  recordButton.textContent = 'Stop Recording';
+  recordButton.textContent = '録画停止';
   playButton.disabled = true;
   downloadButton.disabled = true;
   codecPreferences.disabled = true;
