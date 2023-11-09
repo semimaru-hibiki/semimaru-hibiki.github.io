@@ -58,4 +58,27 @@
 <script src="../../../js/lib/ga.js"></script>
 
 </body>
+<script>
+        if ("wakeLock" in navigator) {
+        isSupported = true;
+        alert("起動ロック API に対応しています。");
+    } else {
+        wakeButton.disabled = true;
+        alert("このブラウザーは起動ロックに対応していません。");
+    }
+    // 起動ロックの参照を作成
+    let wakeLock = null;
+
+    // 非同期関数を作成して起動ロックをリクエスト
+    async function init(){
+        try {
+          wakeLock = await navigator.wakeLock.request("screen");
+          alert("起動ロックが有効です。");
+        } catch (err) {
+          // 起動ロックのリクエストに失敗。ふつうはバッテリーなどのシステム関連
+          statusElem.textContent = `${err.name}, ${err.message}`;
+        }
+    };
+    init();
+</script>
 </html>
